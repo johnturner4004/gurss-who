@@ -2,74 +2,86 @@ $(document).ready(onReady);
 
 function onReady() {
   console.log('JQ');
-  addPeople();
   $('body').on('click', '.image', clickImage);
+  getShuffle();
+  addPeople();
 }
-console.log('Here are all the available people:', people);
 
-let index = randomNumber(1, people.length) -1;
-console.log(index);
-console.log(people[index].name);
+console.log('Here are all the available people:', people);
+let shuffle = [];
+
+
+
+
+function getShuffle() {
+  let random = 0;
+  let randomArray = [];
+  random = randomNumber(0, people.length-1);
+  for (let i = 0; i < 8; i++) {
+    while (randomArray.includes(random) === true) {
+      random = randomNumber(0, people.length-1);
+    }
+    randomArray.push(random);
+    shuffle.push(people[random]);
+  }
+}
+
+console.log(shuffle);
+
+let index = 0;
 
 function addPeople() {
+  index = randomNumber(1, shuffle.length - 1);
   $('body').append(`
   <header>
-    <h1>Click on: <span id="name">${people[index].name}</span></h1>
+    <h1>Click on: <span id="name">${shuffle[index].name}</span></h1>
   </header>
   <span id="break"></span>
   <main>`)
-  for (let i = 0; i < people.length; i++) {
-    $('body').append(`
-    <div class="image" id=${i}>
-      <img src="https://github.com/${people[i].githubUsername}.png?size=250" alt="Profile image of ${people[i].name}"> 
+
+  for (let i = 0; i < shuffle.length; i++) {
+    if (i === index) {
+      $('body').append(`
+    <div class="image" id=${i} onclick="party.element(this)">
+      <img src="https://github.com/${shuffle[i].githubUsername}.png?size=250" alt="Profile image of ${shuffle[i].name}"> 
     </div>
   `);
+    } else {
+      $('body').append(`
+    <div class="image" id=${i}>
+      <img src="https://github.com/${shuffle[i].githubUsername}.png?size=250" alt="Profile image of ${shuffle[i].name}"> 
+    </div>
+  `);
+    }
   }
   $('body').append(`</main>`)
 }
 
+function clickImage() {
+  console.log('Click');
+  let clickedImage = Number($(this).attr('id'));
+  console.log(clickedImage);
+  if (clickedImage === index) {
 
-  //   <div class="image" id="1">
-  //     <img src="https://avatars.githubusercontent.com/u/11574995?v=4"  alt="Profile image of Dane" width="250" />
-  //   </div>
-  //   <div class="image" id="2">
-  //     <img src="https://avatars.githubusercontent.com/u/5143491?v=4"  alt="Profile image of Mary" width="250" />
-  //   </div>
-  //   <div class="image" id="3">
-  //     <img src="https://avatars.githubusercontent.com/u/5541481?v=4"  alt="Profile image of Kris" width="250" />
-  //   </div>
-  //   <div class="image" id="4">
-  //     <img src="https://avatars.githubusercontent.com/u/1153371?v=4"  alt="Profile image of Edan" width="250" />
-  //   </div>
-  //   <div class="image" id="5">
-  //     <img src="https://avatars.githubusercontent.com/u/10237149?v=4"  alt="Profile image of Cassie" width="250" />
-  //   </div>
-  //   <div class="image" id="6">
-  //     <img src="https://avatars.githubusercontent.com/u/25748592?v=4"  alt="Profile image of Chris" width="250" />
-  //   </div>
-  // </body>
+    setTimeout(winning, 2000);
 
-
-  function clickImage() {
-    console.log('Click');
-    let clickedImage = Number($(this).attr('id'));
-    console.log(clickedImage);
-    if (clickedImage === index) {
-      winning();
-      alert('Correct. Now click on...')
-    } else {
-      alert('Sorry, please try again.')
-    }
-    
+  } else {
+    alert('Sorry, please try again.')
   }
 
-  function randomNumber(min, max){
-    return Math.floor(Math.random() * (1 + max - min) + min);
-    
+}
+
+function randomNumber(min, max) {
+  return Math.floor(Math.random() * (1 + max - min) + min);
+
 }
 
 function winning() {
-  index = randomNumber(0, people.length -1);
-  $('#name').empty()
-  $('#name').append(people[index].name);
+  alert('Correct. Now click on...')
+  $.fx.off = true;
+  location.reload()
+  // index = randomNumber(0, people.length - 1);
+  // $('#name').empty()
+  // $('#name').append(people[index].name);
+  // addPeople();
 }
